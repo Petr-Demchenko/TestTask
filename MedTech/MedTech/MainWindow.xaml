@@ -3,9 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MedTech"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:MedTech" 
+        xmlns:help="clr-namespace:MedTech.Helpers"
         mc:Ignorable="d"
         Title="MedTech" Height="450" Width="800">
+    <Window.Resources>
+        <help:DateTimeConverter x:Key="DateTimeConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,15 +18,29 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="5,5,0,5" HorizontalAlignment="Left" Width="790">
-            <Label Content="Фильтр" VerticalAlignment="Top" />
-            <TextBox x:Name="tbFilter" TextWrapping="Wrap" Text="" TextChanged="tbFilter_TextChanged" Width="730"/>
+            <Label Content="Фильтр" Height="27"  Margin="0,8,0,0" />
+            <TextBox x:Name="tbFilter" TextWrapping="Wrap" Text="" TextChanged="tbFilter_TextChanged" Width="550" Height="21" Margin="0,8,10,0"/>
+            <GroupBox Header="Отображение времени" Height="39" >
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="rbUtc" Content="UTC" Width="70" Height="17" IsChecked="True" />
+                    <RadioButton x:Name="rbLocal" Content="Местное" Width="70" Height="17" />
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
 
         <DataGrid x:Name="dgMessages" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Messages}" IsReadOnly="True" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Время" Binding="{Binding CreationTimeUtc}" Width="Auto" />
+                <DataGridTextColumn Header="Время" SortMemberPath="CreationTimeUtc">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding Converter="{StaticResource DateTimeConverter}" Mode="OneWay">
+                            <Binding Path="CreationTimeUtc" />
+                            <Binding ElementName="rbUtc" Path="IsChecked" />
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Текст" Binding="{Binding Text}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Grid.Row="1"/>
     </Grid>
 </Window>
