@@ -16,7 +16,7 @@ namespace MedTech.Model
             set
             {
                 creationTimeUtc = value;
-                OnPropertyChanged("CreationTimeUtc");
+                OnPropertyChanged(nameof(CreationTimeUtc));
             }
         }
 
